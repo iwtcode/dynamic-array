@@ -2,7 +2,7 @@
 #include <clocale>
 #include <conio.h>
 #include <time.h>
-#include "array.h"
+#include "array.hpp"
 
 int main(int argc, char const *argv[]) {
     setlocale(LC_ALL, "Russian");
