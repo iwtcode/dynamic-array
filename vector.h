@@ -10,47 +10,47 @@ class vector {
     public:
         typedef T* iterator;
         vector();
-        vector(unsigned int size_);
+        vector(size_t size_);
         vector(std::initializer_list<T>);
         vector(const vector &obj);
         ~vector();
         iterator begin() const;
         iterator end() const;
-        T& operator[](unsigned int);
+        T& operator[](size_t);
         vector operator+(const vector&) const;
         vector& operator+=(const vector&);
         vector& operator=(const vector&);
         void rndfill(int, int);
         void add(const T&);
-        void pop(unsigned int);
+        void pop(size_t);
         void pop(iterator);
         void pop();
-        void resize(unsigned int);
+        void resize(size_t);
         void clear();
-        void insert(const vector&, unsigned int);
+        void insert(const vector&, size_t);
         T max() const;
         T min() const;
         T sum() const;
         void sort();
-        int search(T) const;
-        int get_size() const;
-        int get_capacity() const;
+        size_t search(T) const;
+        size_t get_size() const;
+        size_t get_capacity() const;
         template <class U>
         friend std::istream& operator>>(std::istream&, vector<U>&);
         template <class U>
         friend std::ostream& operator<<(std::ostream&, const vector<U>&);
 
     private:
-        int capacity;
-        int size;
+        size_t capacity;
+        size_t size;
         iterator data;
 
-        int allocate(unsigned int);
+        size_t allocate(size_t);
 };
 
 template <class T>
-int vector<T>::allocate(unsigned int size) {
-    int new_capacity = pow(2, ceil(log2(size)));
+size_t vector<T>::allocate(size_t size) {
+    size_t new_capacity = pow(2, ceil(log2(size)));
     T *new_data = new T[new_capacity];
     std::copy(begin(), end(), new_data);
     delete[] data;
@@ -63,7 +63,7 @@ template <class T>
 vector<T>::vector() : capacity(8), size(0), data(new T[capacity]) {}
 
 template <class T>
-vector<T>::vector(unsigned int size_) : capacity(pow(2, ceil(log2(size_)))), size(size_), data(new T[capacity]) {}
+vector<T>::vector(size_t size_) : capacity(pow(2, ceil(log2(size_)))), size(size_), data(new T[capacity]) {}
 
 template <class T>
 vector<T>::vector(std::initializer_list<T> list) : capacity(pow(2, ceil(log2(list.size())))), size(list.size()), data(new T[capacity]) {
@@ -85,7 +85,7 @@ template <class T>
 typename vector<T>::iterator vector<T>::end() const { return (data + size); };
 
 template <class T>
-T& vector<T>::operator[](unsigned int index) {
+T& vector<T>::operator[](size_t index) {
     try {
         if(index >= size) throw std::overflow_error("Stack overflow");
         return data[index];
@@ -122,7 +122,7 @@ vector<T>& vector<T>::operator=(const vector &obj) {
 template <class T>
 void vector<T>::rndfill(int low, int high) {
     if(typeid(T) == typeid(int)) {
-        for(int i = 0; i < size; i++) {
+        for(size_t i = 0; i < size; i++) {
             data[i] = low + rand()%(high - low + 1);
         }
     }
@@ -136,7 +136,7 @@ void vector<T>::add(const T& num) {
 }
 
 template <class T>
-void vector<T>::pop(unsigned int n) {
+void vector<T>::pop(size_t n) {
     try {
         if(n >= size) throw std::underflow_error("Stack overflow");
         std::copy(data + n + 1, end(), data + n);
@@ -176,9 +176,9 @@ void vector<T>::pop() {
 }
 
 template <class T>
-void vector<T>::resize(unsigned int size) {
+void vector<T>::resize(size_t size) {
     if(size > capacity) allocate(size);
-    for (int i = 0; i < size; i++) {
+    for (size_t i = this->size; i < size; i++) {
         data[i] = {};
     }
     this->size = size;
@@ -190,7 +190,7 @@ void vector<T>::clear() {
 }
 
 template <class T>
-void vector<T>::insert(const vector &obj, unsigned int pos) {
+void vector<T>::insert(const vector &obj, size_t pos) {
     try {
         if(size + obj.size < pos) throw std::overflow_error("Stack overflow");
         if(size + obj.size > capacity) allocate(size + obj.size);
@@ -206,57 +206,57 @@ void vector<T>::insert(const vector &obj, unsigned int pos) {
 template <class T>
 T vector<T>::max() const {
     T m = data[0];
-    for (int i = 0; i < size; i++) if(data[i] > m) m = data[i];
+    for (size_t i = 0; i < size; i++) if(data[i] > m) m = data[i];
     return m;
 }
 
 template <class T>
 T vector<T>::min() const {
     T m = data[0];
-    for (int i = 0; i < size; i++) if(data[i] < m) m = data[i];
+    for (size_t i = 0; i < size; i++) if(data[i] < m) m = data[i];
     return m;
 }
 
 template <class T>
 T vector<T>::sum() const {
     T s = data[0];
-    for (int i = 1; i < size; i++) s += data[i];
+    for (size_t i = 1; i < size; i++) s += data[i];
     return s;
 }
 
 template <class T>
 void vector<T>::sort() {
     T key;
-    int low, high, mid;
-    for(int i = 1; i < size; i++) {
+    size_t low, high, mid;
+    for(size_t i = 1; i < size; i++) {
         key = data[i]; low = 0; high = i - 1;
         while (low <= high) {
             mid = (high + low) / 2;
             if (key < data[mid]) high = mid - 1;
             else low = mid + 1;
         }
-        for (int j = i - 1; j >= low; j--) data[j + 1] = data[j];
+        for (size_t j = i - 1; j >= low; j--) data[j + 1] = data[j];
         data[low] = key;
     }
 }
 
 template <class T>
-int vector<T>::search(T item) const {
-    for(int i = 0; i < size; i++) {
+size_t vector<T>::search(T item) const {
+    for(size_t i = 0; i < size; i++) {
         if(data[i] == item) return i;
     }
     return -1;
 }
 
 template <class T>
-int vector<T>::get_size() const { return size; }
+size_t vector<T>::get_size() const { return size; }
 
 template <class T>
-int vector<T>::get_capacity() const { return capacity; }
+size_t vector<T>::get_capacity() const { return capacity; }
 
 template <class T>
 std::istream& operator>>(std::istream& in, vector<T>& obj) {
-    for(int i = 0; i < obj.size; i++) {
+    for(size_t i = 0; i < obj.size; i++) {
         in >> obj.data[i];
     }
     return in;
@@ -264,7 +264,7 @@ std::istream& operator>>(std::istream& in, vector<T>& obj) {
 
 template <class T>
 std::ostream& operator<<(std::ostream& out, const vector<T>& obj) {
-    for(int i = 0; i < obj.size; i++) {
+    for(size_t i = 0; i < obj.size; i++) {
         out << obj.data[i] << " ";
     }
     out << "\n";
