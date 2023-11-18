@@ -10,9 +10,9 @@ class vector {
     public:
         typedef T* iterator;
         vector();
-        vector(size_t size_);
+        vector(size_t);
         vector(std::initializer_list<T>);
-        vector(const vector &obj);
+        vector(const vector&);
         ~vector();
         iterator begin() const;
         iterator end() const;
@@ -63,7 +63,7 @@ template <class T>
 vector<T>::vector() : capacity(8), size(0), data(new T[capacity]) {}
 
 template <class T>
-vector<T>::vector(size_t size_) : capacity(pow(2, ceil(log2(size_)))), size(size_), data(new T[capacity]) {}
+vector<T>::vector(size_t size) : capacity(pow(2, ceil(log2(size)))), size(size), data(new T[capacity]) {}
 
 template <class T>
 vector<T>::vector(std::initializer_list<T> list) : capacity(pow(2, ceil(log2(list.size())))), size(list.size()), data(new T[capacity]) {
