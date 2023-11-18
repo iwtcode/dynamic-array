@@ -121,8 +121,10 @@ vector<T>& vector<T>::operator=(const vector &obj) {
 
 template <class T>
 void vector<T>::rndfill(int low, int high) {
-    for(int i = 0; i < size; i++) {
-        data[i] = low + rand()%(high - low + 1);
+    if(typeid(T) == typeid(int)) {
+        for(int i = 0; i < size; i++) {
+            data[i] = low + rand()%(high - low + 1);
+        }
     }
 }
 
