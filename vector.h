@@ -93,7 +93,9 @@ T& vector<T>::operator[](size_t index) {
     catch(const std::exception& e) {
         std::cerr << e.what() << '\n';
     }
-    return data[0];
+    iterator r = new T[1];
+    *r = {};
+    return *r;
 }
 
 template <class T>
