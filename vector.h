@@ -25,6 +25,7 @@ class vector {
         void pop(size_t);
         void pop(iterator);
         void pop();
+        void swap(vector&);
         void resize(size_t);
         void clear();
         void insert(const vector&, size_t);
@@ -51,12 +52,18 @@ class vector {
 template <class T>
 size_t vector<T>::allocate(size_t size) {
     size_t new_capacity = pow(2, ceil(log2(size)));
-    T *new_data = new T[new_capacity];
-    std::copy(begin(), end(), new_data);
-    delete[] data;
-    capacity = new_capacity;
-    data = new_data;
-    return new_capacity;
+    try {
+        T *new_data = new T[new_capacity];
+        std::copy(begin(), end(), new_data);
+        delete[] data;
+        capacity = new_capacity;
+        data = new_data;
+        return new_capacity;
+    }
+    catch(const std::bad_alloc &e) {
+        throw e;
+    }
+    return 0;
 }
 
 template <class T>
@@ -90,7 +97,7 @@ T& vector<T>::operator[](size_t index) {
         if(index >= size) throw std::overflow_error("Stack overflow");
         return data[index];
     }
-    catch(const std::exception& e) {
+    catch(const std::exception &e) {
         std::cerr << e.what() << '\n';
     }
     return data[capacity - 1];
@@ -111,6 +118,7 @@ vector<T>& vector<T>::operator+=(const vector &obj) {
 
 template <class T>
 vector<T>& vector<T>::operator=(const vector &obj) {
+    if(this == &obj) return *this;
     capacity = obj.capacity;
     size = obj.size;
     delete[] data;
@@ -130,9 +138,14 @@ void vector<T>::rndfill(int low, int high) {
 
 template <class T>
 void vector<T>::add(const T& num) {
-    if(size + 1 > capacity) allocate(size + 1);
-    data[size] = num;
-    size++;
+    try {
+        if(size + 1 > capacity) allocate(size + 1);
+        data[size] = num;
+        size++;
+    }
+    catch(const std::exception &e) {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 template <class T>
@@ -143,7 +156,7 @@ void vector<T>::pop(size_t n) {
         data[size] = {};
         size--;
     }
-    catch(const std::exception& e) {
+    catch(const std::exception &e) {
         std::cerr << e.what() << '\n';
     }
 }
@@ -157,7 +170,7 @@ void vector<T>::pop(iterator p) {
         data[size] = {};
         size--;
     }
-    catch(const std::exception& e) {
+    catch(const std::exception &e) {
         std::cerr << e.what() << '\n';
     }
 }
@@ -170,18 +183,32 @@ void vector<T>::pop() {
         data[size] = {};
         size--;
     }
-    catch(const std::exception& e) {
+    catch(const std::exception &e) {
         std::cerr << e.what() << '\n';
     }
 }
 
 template <class T>
-void vector<T>::resize(size_t size) {
-    if(size > capacity) allocate(size);
-    for (size_t i = this->size; i < size; i++) {
-        data[i] = {};
+void vector<T>::swap(vector &obj) {
+    if(this != &obj) {
+        vector tmp(*this);
+        *this = obj;
+        obj = tmp;
     }
-    this->size = size;
+}
+
+template <class T>
+void vector<T>::resize(size_t size) {
+    try {
+        if(size > capacity) allocate(size);
+        for (size_t i = this->size; i < size; i++) {
+            data[i] = {};
+        }
+        this->size = size;
+    }
+    catch(const std::exception &e) {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 template <class T>
@@ -198,7 +225,7 @@ void vector<T>::insert(const vector &obj, size_t pos) {
         std::copy(obj.begin(), obj.end(), data + pos);
         size += obj.size;
     }
-    catch(const std::exception& e) {
+    catch(const std::exception &e) {
         std::cerr << e.what() << '\n';
     }
 }
@@ -267,7 +294,7 @@ std::ostream& operator<<(std::ostream& out, const vector<T>& obj) {
     for(size_t i = 0; i < obj.size; i++) {
         out << obj.data[i] << " ";
     }
-    out << "\n";
+    out << '\n';
     return out;
 }
 
